@@ -50,7 +50,7 @@ You can run the Docker container with the following command, mapping the necessa
 docker run -it --rm \
   -v /path/to/your/local/files:/app \
   -e INPUT_FILE="file.mp4" \
-  -e PROMPT_FILE="prompt.txt" \
+  -e PROMPT_FILE="meeting.md" \
   -e CONFIG_FILE="config.yml" \
   echomind
 ```
