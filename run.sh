@@ -4,7 +4,7 @@
 
 # Check if correct number of arguments are provided
 if [ "$#" -ne 3 ]; then
-    echo "Usage: ./run_echomind.sh <input_file> <prompt_file> <config_file>"
+    echo "Usage: ./run.sh <input_file> <prompt_file> <config_file>"
     exit 1
 fi
 
