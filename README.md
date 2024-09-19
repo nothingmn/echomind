@@ -78,28 +78,30 @@ The script logs its activities into a file called `echomind.log`. This log can b
 If the script encounters an error during audio extraction, transcription, or interaction with the Ollama API, appropriate error messages will be logged, and execution will halt.
 
 ## Sample Run
-This video:
+### This video:
 https://www.youtube.com/watch?v=lBVtvOpU80Q
 
-To strip the mp3 out (ffmpeg):
+### To strip the mp3 out (ffmpeg):
 About 5 to 7 seconds
 
-Speech to text (whisper):
+### Speech to text (whisper):
 4 minutes
 
-Call to ollama (open-web-ui/completions api) (nvidia 4000, 8GB):
+### Call to ollama (open-web-ui/completions api) (nvidia 4000, 8GB):
 About 1 minute
-
 Model:mistral-small:22b
 
-Prompt:
+### Prompt:
 https://github.com/nothingmn/echomind/blob/main/meeting.md
 (needs work for sure)
 Mostly borrowed from fabric
 https://github.com/danielmiessler/fabric/blob/main/patterns/transcribe_minutes/system.md
 
-[Transcription](sample_output/meeting_llm_output.txt)
-[Model output](sample_output/meeting_transcription.txt)
+
+### Results
+[Transcription](sample_output/meeting_transcription.txt)
+
+[Model Output](sample_output/meeting_llm_output.txt)
 
 
 
