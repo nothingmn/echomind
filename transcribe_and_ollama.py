@@ -6,6 +6,11 @@ import logging
 import requests
 import json
 from datetime import datetime
+import warnings
+
+# Suppress FutureWarnings and UserWarnings reduce the noise
+warnings.filterwarnings("ignore", category=FutureWarning)
+warnings.filterwarnings("ignore", category=UserWarning)
 
 # Setup logging
 logging.basicConfig(
@@ -41,12 +46,12 @@ def extract_audio(video_file, audio_file):
         logging.error(f"Failed to extract audio: {e.stderr}")
         raise
 
-# Step 3: Transcribe audio using Whisper
-def transcribe_audio(audio_file, transcription_file):
-    logging.debug(f"Transcribing audio from file: {audio_file}")
+# Step 3: Transcribe audio using Whisper, with optional model size
+def transcribe_audio(audio_file, transcription_file, whisper_model="base"):
+    logging.debug(f"Transcribing audio from file: {audio_file} using model: {whisper_model}")
     try:
-        model = whisper.load_model("base")
-        logging.debug("Whisper model loaded successfully")
+        model = whisper.load_model(whisper_model)  # Load the specified Whisper model
+        logging.debug(f"Whisper model '{whisper_model}' loaded successfully")
         result = model.transcribe(audio_file)
         logging.info(f"Transcription completed. Saving to {transcription_file}")
         with open(transcription_file, 'w') as f:
@@ -56,8 +61,6 @@ def transcribe_audio(audio_file, transcription_file):
     except Exception as e:
         logging.error(f"Failed to transcribe audio: {e}")
         raise
-
-
 
 # Step 4: Send transcription and prompt to Ollama LLM using the requests library
 def send_to_ollama(model_name, prompt_file, transcription, ollama_api_url, ollama_api_token):
@@ -113,7 +116,7 @@ def is_video_file(file_path):
         return False
 
 # Step 5: Main function to handle everything
-def main(input_file, prompt_file, config_file):
+def main(input_file, prompt_file, config_file, whisper_model=None):
     logging.info(f"Starting processing for {input_file} {prompt_file} {config_file}")
 
     # Step 1: Load config
@@ -131,6 +134,9 @@ def main(input_file, prompt_file, config_file):
     ollama_api_token = config.get('ollama_api_token')
     ollama_api_url = config.get('ollama_api_url')
 
+    # Get whisper model from config or override via CLI
+    whisper_model = whisper_model or config.get('whisper_model', 'base')  # Default to "base"
+
     # Step 2: Determine if input file is a video or audio file
     if is_video_file(input_file):
         logging.info(f"{input_file} is a video file. Extracting audio...")
@@ -139,8 +145,8 @@ def main(input_file, prompt_file, config_file):
         logging.info(f"{input_file} is an audio file. Skipping audio extraction...")
         audio_file = input_file  # Use the audio file directly
 
-    # Step 3: Transcribe audio
-    transcription = transcribe_audio(audio_file, transcription_file)
+    # Step 3: Transcribe audio with the specified Whisper model
+    transcription = transcribe_audio(audio_file, transcription_file, whisper_model)
 
     # Step 4: Send transcription and prompt to Ollama LLM
     llm_output = send_to_ollama(model_name, prompt_file, transcription, ollama_api_url, ollama_api_token)
@@ -161,5 +167,6 @@ if __name__ == "__main__":
     input_file = os.getenv("INPUT_FILE", sys.argv[1] if len(sys.argv) > 1 else "file.mp4")
     prompt_file = os.getenv("PROMPT_FILE", sys.argv[2] if len(sys.argv) > 2 else "prompt.txt")
     config_file = os.getenv("CONFIG_FILE", sys.argv[3] if len(sys.argv) > 3 else "config.yml")
+    whisper_model = os.getenv("WHISPER_MODEL", sys.argv[4] if len(sys.argv) > 4 else None)  # Can override via CLI
 
-    main(input_file, prompt_file, config_file)
+    main(input_file, prompt_file, config_file, whisper_model)
