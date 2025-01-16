@@ -1,5 +1,5 @@
 #!/bin/bash
- 
+
  docker build -t echomind .
 
 # Check if correct number of arguments are provided
@@ -16,6 +16,7 @@ CONFIG_FILE=$3
 # Run the Docker command with the provided arguments
 docker run -it --rm \
   -v "$(pwd):/app" \
+  -v "$(pwd)/model:/root/.cache/whisper" \
   -e INPUT_FILE="$INPUT_FILE" \
   -e PROMPT_FILE="$PROMPT_FILE" \
   -e CONFIG_FILE="$CONFIG_FILE" \
