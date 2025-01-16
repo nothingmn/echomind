@@ -61,6 +61,8 @@ This command:
 - Mounts the `model` directory to the download location of the whisper model to avoid repeat downloads
 - Sets environment variables for the input file, prompt file, and config file.
 
+If your Ollama installation is on the same host, you will want to include `--network host` to the command in order to run the container with the ability to interact with the host's loopback address.
+
 ### Output Files
 
 The script will generate the following output files based on the input filename:
