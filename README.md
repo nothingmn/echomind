@@ -48,7 +48,8 @@ You can run the Docker container with the following command, mapping the necessa
 
 ```bash
 docker run -it --rm \
-  -v /path/to/your/local/files:/app \
+  -v ./:/app \
+  -v ./model:/root/.cache/whisper \
   -e INPUT_FILE="file.mp4" \
   -e PROMPT_FILE="meeting.md" \
   -e CONFIG_FILE="config.yml" \
@@ -56,8 +57,11 @@ docker run -it --rm \
 ```
 
 This command:
-- Mounts the directory containing your files to the `/app` directory inside the Docker container.
+- Mounts the root of the repo to the `/app` directory inside the Docker container.
+- Mounts the `model` directory to the download location of the whisper model to avoid repeat downloads
 - Sets environment variables for the input file, prompt file, and config file.
+
+If your Ollama installation is on the same host, you will want to include `--network host` to the command in order to run the container with the ability to interact with the host's loopback address.
 
 ### Output Files
 
